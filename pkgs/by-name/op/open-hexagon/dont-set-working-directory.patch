@@ -1,0 +1,17 @@
+diff --git a/src/SSVOpenHexagon/Core/main.cpp b/src/SSVOpenHexagon/Core/main.cpp
+index 42f40408..cf671e3c 100644
+--- a/src/SSVOpenHexagon/Core/main.cpp
++++ b/src/SSVOpenHexagon/Core/main.cpp
+@@ -646,12 +646,6 @@ int main(int argc, char* argv[])
+         ssvu::lo("::main") << "Done saving log to 'log.txt'\n";
+     });
+ 
+-    //
+-    //
+-    // ------------------------------------------------------------------------
+-    // Set working directory to current executable location
+-    std::filesystem::current_path(std::filesystem::path{argv[0]}.parent_path());
+-
+     //
+     //
+     // ------------------------------------------------------------------------
