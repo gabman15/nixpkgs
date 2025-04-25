@@ -1,8 +1,8 @@
 {
   stdenv,
-  lib,
   fetchFromGitHub,
   cmake,
+  lib,
   libXrandr,
   libXcursor,
   libXfixes,
@@ -13,7 +13,6 @@
   libvorbis,
   flac,
   cpm-cmake,
-  # zlib,
   libsodium,
   freetype
 }:
@@ -58,21 +57,20 @@ let
       hash = "sha256-NgAEcQsjed6nHRh/uNj2u9gxI7HQDW6G9TUUPpdgP/w=";
     };
   };
-  libsodium-cmake = {
-    src = fetchFromGitHub {
-      owner = "vittorioromeo";
-      repo = "libsodium-cmake";
-      rev = "fd76500b60fcaa341b6fad24cda88c3504df770d";
-      fetchSubmodules = true;
-      hash = "sha256-knoRCiE9jKrnr6/9UTftdm0jXRg93z9EJknFDV95kVA=";
-    };
-  };
   boostpfr = {
     src = fetchFromGitHub {
       owner = "boostorg";
       repo = "pfr";
       rev = "b0bf18798c7037ca8a91a1cd2ad2e5798d8f6d46";
       hash = "sha256-vKk4cAkbAEqCOjOukWQC8NoYixgA3bgXgzqWprc2hM0=";
+    };
+  };
+  open-hexagon-assets = {
+    src = fetchFromGitHub {
+      owner = "vittorioromeo";
+      repo = "SSVOpenHexagonAssets";
+      rev = "9cc371a0eb9b2f6d3b6b113eabca32d1a16324b5";
+      hash = "sha256-4g5/rqbESyLr+046M6aYqaotafNtbm1mzIQaIHQUHFs=";
     };
   };
 in stdenv.mkDerivation rec {
@@ -85,7 +83,6 @@ in stdenv.mkDerivation rec {
     fetchSubmodules = true;
     sha256 = "sha256-7H4DmzlByNBI9uke2m01hxPYFootIPwcKl/Iu2VsKyQ=";
   };
-  # cmakelist = builtins.readFile ../CMakeLists.txt;
 
   nativeBuildInputs = [ cmake cpm-cmake ];
 
@@ -141,44 +138,16 @@ in stdenv.mkDerivation rec {
     mv $TMP/$sourceRoot/_RELEASE/libsteam_api.so $out/lib/
     mv $TMP/$sourceRoot/_RELEASE/libdiscord_game_sdk.so $out/lib/
     mv $TMP/$sourceRoot/_RELEASE/libsdkencryptedappticket.so $out/lib/
-    mv $TMP/$sourceRoot/_RELEASE $out/share/
+    cp -R --no-preserve=mode,ownership ${open-hexagon-assets.src}/_RELEASE $out/share/
+    mv $TMP/$sourceRoot/_RELEASE/SSVOpenHexagon $out/share/
     echo "#!/bin/bash" > $out/bin/open-hexagon
     echo "if [ ! -d ~/.local/share/open-hexagon ]; then" >> $out/bin/open-hexagon
     echo "mkdir -p ~/.local/share/open-hexagon" >> $out/bin/open-hexagon
     echo "cp -R --no-preserve=mode,ownership $out/share/_RELEASE/Assets ~/.local/share/open-hexagon/Assets" >> $out/bin/open-hexagon
-    echo "cp -R --no-preserve=mode,ownership $out/share/_RELEASE/ConfigOverrides ~/.local/share/open-hexagon/ConfigOverrides" >> $out/bin/open-hexagon
     echo "cp -R --no-preserve=mode,ownership $out/share/_RELEASE/Packs ~/.local/share/open-hexagon/Packs" >> $out/bin/open-hexagon
     echo "fi" >> $out/bin/open-hexagon
     echo "cd ~/.local/share/open-hexagon" >> $out/bin/open-hexagon
-    echo "$out/share/_RELEASE/SSVOpenHexagon" >> $out/bin/open-hexagon
+    echo "$out/share/SSVOpenHexagon" >> $out/bin/open-hexagon
     chmod +x $out/bin/open-hexagon
   '';
-
-  # postUnpack = let
-
-  #   split-cmakelist = (cpm_pkg: input_cmakelist: builtins.split "(CPMAddPackage\\([^)]*NAME ${cpm_pkg}[^)]*\\))" input_cmakelist);
-  #   update-cmakelist = (cpm_pkg: input_cmakelist: lib.strings.concatStrings [
-  #     (lib.lists.last (lib.lists.take 1 (split-cmakelist cpm_pkg input_cmakelist)))
-  #     "add_subdirectory(${cpm_pkg})"
-  #     (lib.lists.last (split-cmakelist cpm_pkg input_cmakelist))
-  #   ]);
-  #   cpm_pkgs = [ "luajit" "SFML" "zlib" "imgui-sfml" "libsodium-cmake" "boostpfr" ];
-  #   newcmakelist = builtins.foldl' (acc: elem: (update-cmakelist elem acc)) cmakelist cpm_pkgs;
-  # in
-  #   ''
-  #     (
-  #       cd "$sourceRoot"
-  #       cp -R --no-preserve=mode,ownership ${luajit.src} luajit
-  #       cp -R --no-preserve=mode,ownership ${SFML.src} SFML
-  #       cp -R --no-preserve=mode,ownership ${zlib.src} zlib
-  #       cp -R --no-preserve=mode,ownership ${imgui.src} imgui
-  #       cp -R --no-preserve=mode,ownership ${imgui-sfml.src} imgui-sfml
-  #       cp -R --no-preserve=mode,ownership ${libsodium-cmake.src} libsodium-cmake
-  #       cp -R --no-preserve=mode,ownership ${boostpfr.src} boostpfr
-  #       echo '${newcmakelist}' > CMakeLists.txt
-  #       cat CMakeLists.txt
-  #       patchShebangs .
-  #     )
-  #   '';
-
 }
