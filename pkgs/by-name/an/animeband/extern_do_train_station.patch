@@ -1,0 +1,12 @@
+diff --git a/src/externs.h b/src/externs.h
+index 937c37346..7e0cb0ec6 100644
+--- a/src/externs.h
++++ b/src/externs.h
+@@ -307,6 +307,7 @@ extern void search(void);
+ extern void py_pickup(int pickup);
+ extern void hit_tele(int y, int x);
+ extern void hit_train_station(void);
++extern void do_train_station(void);
+ extern void hit_trap(int y, int x);
+ extern void hit_trigger(int y, int x);
+ extern void hit_trigger2(int y, int x);

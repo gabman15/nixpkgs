@@ -1,0 +1,13 @@
+diff --git a/src/melee1.c b/src/melee1.c
+index 5115c1b1c..61362ec9f 100644
+--- a/src/melee1.c
++++ b/src/melee1.c
+@@ -358,7 +358,7 @@ bool make_attack_normal(int m_idx)
+ 		p_ptr->replacement = FALSE;
+ 		p_ptr->blur = 1;  /* Phase out for this turn. */
+ //		break;
+-		method = NULL;
++		method = 0;
+ 		continue;
+ 
+ 	}
